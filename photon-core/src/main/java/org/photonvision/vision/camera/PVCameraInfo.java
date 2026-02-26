@@ -33,7 +33,8 @@ import java.util.Objects;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = PVCameraInfo.PVUsbCameraInfo.class),
     @JsonSubTypes.Type(value = PVCameraInfo.PVCSICameraInfo.class),
-    @JsonSubTypes.Type(value = PVCameraInfo.PVFileCameraInfo.class)
+    @JsonSubTypes.Type(value = PVCameraInfo.PVFileCameraInfo.class),
+    @JsonSubTypes.Type(value = PVCameraInfo.PVPathCameraInfo.class)
 })
 public sealed interface PVCameraInfo {
     /**
@@ -289,6 +290,67 @@ public sealed interface PVCameraInfo {
         }
     }
 
+    /**
+     * A camera bound to a specific device path, without using v4l2 by-path symlinks, vendor IDs, or
+     * product IDs. The path is used directly as both the device path and the unique path.
+     */
+    @JsonTypeName("PVPathCameraInfo")
+    public static final class PVPathCameraInfo implements PVCameraInfo {
+        public final String path;
+        public final String name;
+
+        @JsonCreator
+        public PVPathCameraInfo(
+                @JsonProperty("path") String path, @JsonProperty("name") String name) {
+            this.path = path;
+            this.name = name;
+        }
+
+        @Override
+        public String path() {
+            return path;
+        }
+
+        @Override
+        public String name() {
+            return name;
+        }
+
+        @Override
+        public String uniquePath() {
+            return path;
+        }
+
+        @Override
+        public String[] otherPaths() {
+            return new String[0];
+        }
+
+        @Override
+        public CameraType type() {
+            return CameraType.PathCamera;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (!(obj instanceof PVPathCameraInfo info)) return false;
+
+            return path.equals(info.path);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(path);
+        }
+
+        @Override
+        public String toString() {
+            return "PVPathCameraInfo[type=" + type() + ", name=" + name + ", path='" + path + "']";
+        }
+    }
+
     public static PVCameraInfo fromUsbCameraInfo(UsbCameraInfo info) {
         return new PVUsbCameraInfo(info);
     }
@@ -299,5 +361,9 @@ public sealed interface PVCameraInfo {
 
     public static PVCameraInfo fromFileInfo(String path, String baseName) {
         return new PVFileCameraInfo(path, baseName);
+    }
+
+    public static PVCameraInfo fromPathInfo(String path, String name) {
+        return new PVPathCameraInfo(path, name);
     }
 }

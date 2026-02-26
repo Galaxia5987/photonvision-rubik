@@ -20,5 +20,6 @@ package org.photonvision.vision.camera;
 public enum CameraType {
     UsbCamera,
     ZeroCopyPicam,
-    FileCamera // special case for File-based vision sources
+    FileCamera, // special case for File-based vision sources
+    PathCamera // camera bound to a specific device path, without v4l2/by-path/vendorid matching
 }
