@@ -79,54 +79,58 @@ public class NTTopicSet {
     public DoubleArrayPublisher cameraDistortionPublisher;
 
     public void updateEntries() {
-//        var rawBytesEntry =
-//                subTable
-//                        .getRawTopic("rawBytes")
-//                        .publish(
-//                                PhotonPipelineResult.photonStruct.getTypeString(),
-//                                PubSubOption.periodic(0.01),
-//                                PubSubOption.sendAll(true),
-//                                PubSubOption.keepDuplicates(true));
-//
-//        resultPublisher =
-//                new PacketPublisher<PhotonPipelineResult>(rawBytesEntry, PhotonPipelineResult.photonStruct);
+        //        var rawBytesEntry =
+        //                subTable
+        //                        .getRawTopic("rawBytes")
+        //                        .publish(
+        //                                PhotonPipelineResult.photonStruct.getTypeString(),
+        //                                PubSubOption.periodic(0.01),
+        //                                PubSubOption.sendAll(true),
+        //                                PubSubOption.keepDuplicates(true));
+        //
+        //        resultPublisher =
+        //                new PacketPublisher<PhotonPipelineResult>(rawBytesEntry,
+        // PhotonPipelineResult.photonStruct);
         protoResultPublisher =
                 subTable
                         .getProtobufTopic("result_proto", PhotonPipelineResult.proto)
                         .publish(PubSubOption.periodic(0.01), PubSubOption.sendAll(true));
 
-//        pipelineIndexPublisher = subTable.getIntegerTopic("pipelineIndexState").publish();
-//        pipelineIndexRequestSub = subTable.getIntegerTopic("pipelineIndexRequest").subscribe(0);
+        //        pipelineIndexPublisher = subTable.getIntegerTopic("pipelineIndexState").publish();
+        //        pipelineIndexRequestSub =
+        // subTable.getIntegerTopic("pipelineIndexRequest").subscribe(0);
 
-//        driverModePublisher = subTable.getBooleanTopic("driverMode").publish();
-//        driverModeSubscriber = subTable.getBooleanTopic("driverModeRequest").subscribe(false);
-//
-//         Fun little hack to make the request show up
-//        driverModeSubscriber.getTopic().publish().setDefault(false);
+        //        driverModePublisher = subTable.getBooleanTopic("driverMode").publish();
+        //        driverModeSubscriber = subTable.getBooleanTopic("driverModeRequest").subscribe(false);
+        //
+        //         Fun little hack to make the request show up
+        //        driverModeSubscriber.getTopic().publish().setDefault(false);
 
-//        fpsLimitPublisher = subTable.getIntegerTopic("fpsLimit").publish();
-//        fpsLimitSubscriber = subTable.getIntegerTopic("fpsLimitRequest").subscribe(-1);
-//
-//        fpsLimitSubscriber.getTopic().publish().setDefault(-1);
+        //        fpsLimitPublisher = subTable.getIntegerTopic("fpsLimit").publish();
+        //        fpsLimitSubscriber = subTable.getIntegerTopic("fpsLimitRequest").subscribe(-1);
+        //
+        //        fpsLimitSubscriber.getTopic().publish().setDefault(-1);
 
         latencyMillisEntry = subTable.getDoubleTopic("latencyMillis").publish();
         fpsEntry = subTable.getDoubleTopic("fps").publish();
-//        hasTargetEntry = subTable.getBooleanTopic("hasTarget").publish();
+        //        hasTargetEntry = subTable.getBooleanTopic("hasTarget").publish();
 
-//        targetPitchEntry = subTable.getDoubleTopic("targetPitch").publish();
-//        targetAreaEntry = subTable.getDoubleTopic("targetArea").publish();
-//        targetYawEntry = subTable.getDoubleTopic("targetYaw").publish();
-//        targetPoseEntry = subTable.getStructTopic("targetPose", Transform3d.struct).publish();
-//        targetSkewEntry = subTable.getDoubleTopic("targetSkew").publish();
+        //        targetPitchEntry = subTable.getDoubleTopic("targetPitch").publish();
+        //        targetAreaEntry = subTable.getDoubleTopic("targetArea").publish();
+        //        targetYawEntry = subTable.getDoubleTopic("targetYaw").publish();
+        //        targetPoseEntry = subTable.getStructTopic("targetPose", Transform3d.struct).publish();
+        //        targetSkewEntry = subTable.getDoubleTopic("targetSkew").publish();
 
-//        bestTargetPosX = subTable.getDoubleTopic("targetPixelsX").publish();
-//        bestTargetPosY = subTable.getDoubleTopic("targetPixelsY").publish();
+        //        bestTargetPosX = subTable.getDoubleTopic("targetPixelsX").publish();
+        //        bestTargetPosY = subTable.getDoubleTopic("targetPixelsY").publish();
 
         heartbeatTopic = subTable.getIntegerTopic("heartbeat");
         heartbeatPublisher = heartbeatTopic.publish();
 
-//        cameraIntrinsicsPublisher = subTable.getDoubleArrayTopic("cameraIntrinsics").publish();
-//        cameraDistortionPublisher = subTable.getDoubleArrayTopic("cameraDistortion").publish();
+        //        cameraIntrinsicsPublisher =
+        // subTable.getDoubleArrayTopic("cameraIntrinsics").publish();
+        //        cameraDistortionPublisher =
+        // subTable.getDoubleArrayTopic("cameraDistortion").publish();
     }
 
     @SuppressWarnings("DuplicatedCode")
