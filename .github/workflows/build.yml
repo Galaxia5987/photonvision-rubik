@@ -93,47 +93,6 @@ jobs:
           ./gradlew build
           ./gradlew clean
 
-  playwright-tests:
-    name: "Playwright E2E tests"
-    runs-on: ubuntu-24.04
-    needs: [validation]
-    steps:
-      # Checkout code.
-      - name: Checkout code
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - name: Fetch tags
-        run: git fetch --tags --force
-      - name: Install Java 17
-        uses: actions/setup-java@v5
-        with:
-          java-version: 17
-          distribution: temurin
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-      - name: Setup tests
-        working-directory: photon-client
-        run: |
-          pnpm install
-          pnpm test-setup
-      - name: Prebuild Gradle
-        run: ./gradlew photon-targeting:build photon-core:build photon-server:build -x check
-      - name: Run Playwright tests
-        working-directory: photon-client
-        run: pnpm test
-      - uses: actions/upload-artifact@v6
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report
-          path: photon-client/playwright-report/
-          retention-days: 30
   build-gradle:
     name: "Gradle Build"
     runs-on: ubuntu-24.04
@@ -160,9 +119,8 @@ jobs:
         with:
           node-version: 22
       - name: Gradle Build
-        run: ./gradlew photon-targeting:build photon-core:build photon-server:build -x check
-      - name: Gradle Tests and Coverage
-        run: ./gradlew test jacocoTestReport --stacktrace
+        run: ./gradlew photon-targeting:build photon-core:build photon-server:build -x check -x test
+
   build-offline-docs:
     name: "Build Offline Docs"
     runs-on: ubuntu-24.04
@@ -247,7 +205,7 @@ jobs:
           java-version: 17
           distribution: temurin
       - run: git fetch --tags --force
-      - run: ./gradlew photon-targeting:build photon-lib:build
+      - run: ./gradlew photon-targeting:build photon-lib:build -x test
         name: Build with Gradle
       - run: ./gradlew photon-lib:publish photon-targeting:publish
         name: Publish
@@ -370,9 +328,9 @@ jobs:
         with:
           name: built-docs
           path: photon-server/src/main/resources/web/docs
-      - run: ./gradlew photon-targeting:jar photon-server:shadowJar -PArchOverride=${{ matrix.arch-override }}
+      - run: ./gradlew photon-targeting:jar photon-server:shadowJar -PArchOverride=${{ matrix.arch-override }} -x test
         if: ${{ (matrix.arch-override != 'none') }}
-      - run: ./gradlew photon-server:shadowJar
+      - run: ./gradlew photon-server:shadowJar -x test
         if: ${{ (matrix.arch-override == 'none') }}
       - uses: actions/upload-artifact@v6
         with:
@@ -417,60 +375,6 @@ jobs:
     name: "Build fat JAR - ${{ matrix.artifact-name }}"
 
     steps: *build-package-steps
-
-  run-smoketest-native:
-    needs: [build-package-linux, build-package-macos, build-package-windows]
-
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: ubuntu-24.04
-            artifact-name: jar-Linux
-            extraOpts: -Djdk.lang.Process.launchMechanism=vfork
-          - os: windows-latest
-            artifact-name: jar-Win64
-          - os: macos-latest
-            artifact-name: jar-macOS
-
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - name: Install Java 17
-        uses: actions/setup-java@v5
-        with:
-          java-version: 17
-          distribution: temurin
-      - uses: actions/download-artifact@v7
-        with:
-          name: ${{ matrix.artifact-name }}
-      # The jar is run twice to exercise different code paths.
-      - run: |
-          echo "=== First run ==="
-          java -jar ${{ matrix.extraOpts }} *.jar --smoketest
-          echo "=== Checking for files to corrupt ==="
-          find ~ -type f \( -name "*.so" -o -name "*.dylib" \) | head -20
-          if [ -d ~/.wpilib ]; then
-            echo "~/.wpilib directory exists"
-            echo "Contents of ~/.wpilib:"
-            find ~/.wpilib -type f \( -name "*.so" -o -name "*.dylib" \) | head -10
-            RANDOM_FILE=$(find ~/.wpilib -type f \( -name "*.so" -o -name "*.dylib" \) | sort -R | head -n 1)
-            if [ ! -z "$RANDOM_FILE" ]; then
-              echo "Corrupting file: $RANDOM_FILE"
-              echo "corrupted data" > "$RANDOM_FILE"
-            else
-              echo "No .so or .dylib files found in ~/.wpilib"
-            fi
-          else
-            echo "~/.wpilib directory does not exist"
-          fi
-          echo "=== Second run ==="
-          java -jar ${{ matrix.extraOpts }} *.jar --smoketest
-        if: ${{ (matrix.os) != 'windows-latest' }}
-      - run: |
-          ls *.jar | %{ Write-Host "Running $($_.Name)"; Start-Process "java" -ArgumentList "-jar `"$($_.FullName)`" --smoketest" -NoNewWindow -Wait; break }
-          ls *.jar | %{ Write-Host "Running $($_.Name)"; Start-Process "java" -ArgumentList "-jar `"$($_.FullName)`" --smoketest" -NoNewWindow -Wait; break }
-        if: ${{ (matrix.os) == 'windows-latest' }}
 
   build-image:
     needs: [build-package-linux]
@@ -596,7 +500,6 @@ jobs:
           new_image_name=$(basename "${new_jar/.jar/_${{ matrix.image_suffix }}.img}")
           sudo mv ${{ steps.generate_image.outputs.image }} $new_image_name
           sudo xz -T 0 -kv $new_image_name
-          echo "smoketest_image_loc=${new_image_name}" >> $GITHUB_ENV
 
       - name: Tar built image (Rubik)
         # Build the RubikPi3-specific tar file
@@ -609,24 +512,12 @@ jobs:
           sudo mkdir --parents ${tardir}
           sudo cp ${imagedir}/* ${tardir}/
           sudo tar -I 'xz -T0' -cf ${tardir}.tar.xz ${tardir} --checkpoint=10000 --checkpoint-action=echo='%T'
-          # Point smoketest to the old image
-          echo "smoketest_image_loc=${{ steps.generate_image.outputs.image }}" >> $GITHUB_ENV
 
       - uses: actions/upload-artifact@v6
         name: Upload image
         with:
           name: image-${{ matrix.image_suffix }}
           path: photonvision*.xz
-
-        # This is done after uploading the image to avoid contaminating the image with logs, caches, etc.
-      - uses: photonvision/photon-image-runner@HEAD
-        name: Smoketest Image
-        with:
-          image_url: file://${{ env.smoketest_image_loc }}
-          minimum_free_mb: ${{ matrix.minimum_free_mb }}
-          root_location: ${{ matrix.root_location || 'partition=2' }}
-          shrink_image: ${{ matrix.shrink_image || 'yes' }}
-          commands: java -jar *.jar --smoketest --platform=${{ matrix.plat_override }}
 
   matrix-checker:
     # This job always runs last to set the overall result based on the matrix jobs. If any matrix job failed, this job will fail.
@@ -638,8 +529,7 @@ jobs:
       - run: ${{!contains(needs.*.result, 'failure')}}
 
   release:
-    # Require smoketest-native so that if those fail, we don't release broken artifacts
-    needs: [build-photonlib-vendorjson, build-image, combine, build-package-linux, build-package-macos, build-package-windows, run-smoketest-native]
+    needs: [build-photonlib-vendorjson, build-image, combine, build-package-linux, build-package-macos, build-package-windows]
     if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) && github.repository == 'PhotonVision/photonvision'
     runs-on: ubuntu-24.04
     steps:

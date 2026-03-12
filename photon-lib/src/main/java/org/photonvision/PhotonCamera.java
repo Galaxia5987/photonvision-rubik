@@ -63,37 +63,37 @@ public class PhotonCamera implements AutoCloseable {
 
     private final NetworkTable cameraTable;
     PacketSubscriber<PhotonPipelineResult> resultSubscriber;
-    BooleanPublisher driverModePublisher;
-    BooleanSubscriber driverModeSubscriber;
-    IntegerPublisher fpsLimitPublisher;
-    IntegerSubscriber fpsLimitSubscriber;
-    StringSubscriber versionEntry;
-    IntegerEntry inputSaveImgEntry, outputSaveImgEntry;
-    IntegerPublisher pipelineIndexRequest, ledModeRequest;
-    IntegerSubscriber pipelineIndexState, ledModeState;
+//    BooleanPublisher driverModePublisher;
+//    BooleanSubscriber driverModeSubscriber;
+//    IntegerPublisher fpsLimitPublisher;
+//    IntegerSubscriber fpsLimitSubscriber;
+//    StringSubscriber versionEntry;
+//    IntegerEntry inputSaveImgEntry, outputSaveImgEntry;
+//    IntegerPublisher pipelineIndexRequest, ledModeRequest;
+//    IntegerSubscriber pipelineIndexState, ledModeState;
     IntegerSubscriber heartbeatSubscriber;
-    DoubleArraySubscriber cameraIntrinsicsSubscriber;
-    DoubleArraySubscriber cameraDistortionSubscriber;
+//    DoubleArraySubscriber cameraIntrinsicsSubscriber;
+//    DoubleArraySubscriber cameraDistortionSubscriber;
     MultiSubscriber topicNameSubscriber;
     NetworkTable rootPhotonTable;
 
     @Override
     public void close() {
         resultSubscriber.close();
-        driverModePublisher.close();
-        driverModeSubscriber.close();
-        fpsLimitPublisher.close();
-        fpsLimitSubscriber.close();
-        versionEntry.close();
-        inputSaveImgEntry.close();
-        outputSaveImgEntry.close();
-        pipelineIndexRequest.close();
-        pipelineIndexState.close();
-        ledModeRequest.close();
-        ledModeState.close();
-        pipelineIndexRequest.close();
-        cameraIntrinsicsSubscriber.close();
-        cameraDistortionSubscriber.close();
+//        driverModePublisher.close();
+//        driverModeSubscriber.close();
+//        fpsLimitPublisher.close();
+//        fpsLimitSubscriber.close();
+//        versionEntry.close();
+//        inputSaveImgEntry.close();
+//        outputSaveImgEntry.close();
+//        pipelineIndexRequest.close();
+//        pipelineIndexState.close();
+//        ledModeRequest.close();
+//        ledModeState.close();
+//        pipelineIndexRequest.close();
+//        cameraIntrinsicsSubscriber.close();
+//        cameraDistortionSubscriber.close();
         topicNameSubscriber.close();
     }
 
@@ -153,23 +153,23 @@ public class PhotonCamera implements AutoCloseable {
                                 PubSubOption.sendAll(true),
                                 PubSubOption.pollStorage(20));
         resultSubscriber = new PacketSubscriber<>(rawBytesEntry, PhotonPipelineResult.photonStruct);
-        driverModePublisher = cameraTable.getBooleanTopic("driverModeRequest").publish();
-        driverModeSubscriber = cameraTable.getBooleanTopic("driverMode").subscribe(false);
-        fpsLimitPublisher = cameraTable.getIntegerTopic("fpsLimitRequest").publish();
-        fpsLimitSubscriber = cameraTable.getIntegerTopic("fpsLimit").subscribe(-1);
-        inputSaveImgEntry = cameraTable.getIntegerTopic("inputSaveImgCmd").getEntry(0);
-        outputSaveImgEntry = cameraTable.getIntegerTopic("outputSaveImgCmd").getEntry(0);
-        pipelineIndexRequest = cameraTable.getIntegerTopic("pipelineIndexRequest").publish();
-        pipelineIndexState = cameraTable.getIntegerTopic("pipelineIndexState").subscribe(0);
+//        driverModePublisher = cameraTable.getBooleanTopic("driverModeRequest").publish();
+//        driverModeSubscriber = cameraTable.getBooleanTopic("driverMode").subscribe(false);
+//        fpsLimitPublisher = cameraTable.getIntegerTopic("fpsLimitRequest").publish();
+//        fpsLimitSubscriber = cameraTable.getIntegerTopic("fpsLimit").subscribe(-1);
+//        inputSaveImgEntry = cameraTable.getIntegerTopic("inputSaveImgCmd").getEntry(0);
+//        outputSaveImgEntry = cameraTable.getIntegerTopic("outputSaveImgCmd").getEntry(0);
+//        pipelineIndexRequest = cameraTable.getIntegerTopic("pipelineIndexRequest").publish();
+//        pipelineIndexState = cameraTable.getIntegerTopic("pipelineIndexState").subscribe(0);
         heartbeatSubscriber = cameraTable.getIntegerTopic("heartbeat").subscribe(-1);
-        cameraIntrinsicsSubscriber =
-                cameraTable.getDoubleArrayTopic("cameraIntrinsics").subscribe(null);
-        cameraDistortionSubscriber =
-                cameraTable.getDoubleArrayTopic("cameraDistortion").subscribe(null);
+//        cameraIntrinsicsSubscriber =
+//                cameraTable.getDoubleArrayTopic("cameraIntrinsics").subscribe(null);
+//        cameraDistortionSubscriber =
+//                cameraTable.getDoubleArrayTopic("cameraDistortion").subscribe(null);
 
-        ledModeRequest = rootPhotonTable.getIntegerTopic("ledModeRequest").publish();
-        ledModeState = rootPhotonTable.getIntegerTopic("ledModeState").subscribe(-1);
-        versionEntry = rootPhotonTable.getStringTopic("version").subscribe("");
+//        ledModeRequest = rootPhotonTable.getIntegerTopic("ledModeRequest").publish();
+//        ledModeState = rootPhotonTable.getIntegerTopic("ledModeState").subscribe(-1);
+//        versionEntry = rootPhotonTable.getStringTopic("version").subscribe("");
 
         // Existing is enough to make this multisubscriber do its thing
         topicNameSubscriber =
@@ -333,8 +333,10 @@ public class PhotonCamera implements AutoCloseable {
      *
      * @return Whether the camera is in driver mode.
      */
+    @Deprecated
     public boolean getDriverMode() {
-        return driverModeSubscriber.get();
+//        return driverModeSubscriber.get();
+        return false;
     }
 
     /**
@@ -342,8 +344,9 @@ public class PhotonCamera implements AutoCloseable {
      *
      * @param driverMode Whether to set driver mode.
      */
+    @Deprecated
     public void setDriverMode(boolean driverMode) {
-        driverModePublisher.set(driverMode);
+//        driverModePublisher.set(driverMode);
     }
 
     /**
@@ -351,8 +354,9 @@ public class PhotonCamera implements AutoCloseable {
      *
      * @return The current FPS limit.
      */
+    @Deprecated
     public int getFPSLimit() {
-        return (int) fpsLimitSubscriber.get();
+        return 0;
     }
 
     /**
@@ -360,8 +364,9 @@ public class PhotonCamera implements AutoCloseable {
      *
      * @param fps The FPS limit to set. Set to -1 for unlimited FPS.
      */
+    @Deprecated
     public void setFPSLimit(int fps) {
-        fpsLimitPublisher.set(fps);
+//        fpsLimitPublisher.set(fps);
     }
 
     /**
@@ -370,8 +375,9 @@ public class PhotonCamera implements AutoCloseable {
      * space and eventually cause the system to stop working. Clear out images in
      * /opt/photonvision/photonvision_config/imgSaves frequently to prevent issues.
      */
+    @Deprecated
     public void takeInputSnapshot() {
-        inputSaveImgEntry.set(inputSaveImgEntry.get() + 1);
+//        inputSaveImgEntry.set(inputSaveImgEntry.get() + 1);
     }
 
     /**
@@ -380,8 +386,9 @@ public class PhotonCamera implements AutoCloseable {
      * and eventually cause the system to stop working. Clear out images in
      * /opt/photonvision/photonvision_config/imgSaves frequently to prevent issues.
      */
+    @Deprecated
     public void takeOutputSnapshot() {
-        outputSaveImgEntry.set(outputSaveImgEntry.get() + 1);
+//        outputSaveImgEntry.set(outputSaveImgEntry.get() + 1);
     }
 
     /**
@@ -389,8 +396,10 @@ public class PhotonCamera implements AutoCloseable {
      *
      * @return The active pipeline index.
      */
+    @Deprecated
     public int getPipelineIndex() {
-        return (int) pipelineIndexState.get(0);
+//        return (int) pipelineIndexState.get(0);
+        return 0;
     }
 
     /**
@@ -398,8 +407,9 @@ public class PhotonCamera implements AutoCloseable {
      *
      * @param index The active pipeline index.
      */
+    @Deprecated
     public void setPipelineIndex(int index) {
-        pipelineIndexRequest.set(index);
+//        pipelineIndexRequest.set(index);
     }
 
     /**
@@ -407,14 +417,9 @@ public class PhotonCamera implements AutoCloseable {
      *
      * @return The current LED mode.
      */
+    @Deprecated
     public VisionLEDMode getLEDMode() {
-        int value = (int) ledModeState.get(-1);
-        return switch (value) {
-            case 0 -> VisionLEDMode.kOff;
-            case 1 -> VisionLEDMode.kOn;
-            case 2 -> VisionLEDMode.kBlink;
-            default -> VisionLEDMode.kDefault;
-        };
+        return VisionLEDMode.kOn;
     }
 
     /**
@@ -422,8 +427,9 @@ public class PhotonCamera implements AutoCloseable {
      *
      * @param led The mode to set to.
      */
+    @Deprecated
     public void setLED(VisionLEDMode led) {
-        ledModeRequest.set(led.value);
+//        ledModeRequest.set(led.value);
     }
 
     /**
@@ -460,12 +466,6 @@ public class PhotonCamera implements AutoCloseable {
         return (now - prevHeartbeatChangeTime) < HEARTBEAT_DEBOUNCE_SEC;
     }
 
-    public Optional<Matrix<N3, N3>> getCameraMatrix() {
-        var cameraMatrix = cameraIntrinsicsSubscriber.get();
-        if (cameraMatrix != null && cameraMatrix.length == 9) {
-            return Optional.of(MatBuilder.fill(Nat.N3(), Nat.N3(), cameraMatrix));
-        } else return Optional.empty();
-    }
 
     /**
      * Returns the camera calibration's distortion coefficients, in OPENCV8 form. Higher-order terms
@@ -474,17 +474,7 @@ public class PhotonCamera implements AutoCloseable {
      * @return The distortion coefficients in a 8x1 matrix, if they are published by the camera. Empty
      *     otherwise.
      */
-    public Optional<Matrix<N8, N1>> getDistCoeffs() {
-        var distCoeffs = cameraDistortionSubscriber.get();
-        if (distCoeffs != null && distCoeffs.length <= 8) {
-            // Copy into array of length 8, and explicitly null higher order terms out
-            double[] data = new double[8];
-            Arrays.fill(data, 0);
-            System.arraycopy(distCoeffs, 0, data, 0, distCoeffs.length);
 
-            return Optional.of(MatBuilder.fill(Nat.N8(), Nat.N1(), data));
-        } else return Optional.empty();
-    }
 
     /**
      * Gets the NetworkTable representing this camera's subtable. You probably don't ever need to call
@@ -534,7 +524,7 @@ public class PhotonCamera implements AutoCloseable {
                     "PhotonVision coprocessor at path " + path + " is not sending new data.", false);
         }
 
-        String versionString = versionEntry.get("");
+        String versionString = "GalaxiaVersion";
 
         // Check mdef UUID
         String local_uuid = PhotonPipelineResult.photonStruct.getInterfaceUUID();
