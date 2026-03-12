@@ -45,6 +45,7 @@ import org.photonvision.raspi.LibCameraJNI;
 import org.photonvision.vision.camera.CameraType;
 import org.photonvision.vision.camera.FileVisionSource;
 import org.photonvision.vision.camera.PVCameraInfo;
+import org.photonvision.vision.camera.USBCameras.PathCameraSource;
 import org.photonvision.vision.camera.USBCameras.USBCameraSource;
 import org.photonvision.vision.camera.csi.LibcameraGpuSource;
 
@@ -320,6 +321,11 @@ public class VisionSourceManager {
                 .filter(info -> info instanceof PVCameraInfo.PVFileCameraInfo)
                 .forEach(cameraInfos::add);
 
+        vmm.getModules().stream()
+                .map(it -> it.getCameraConfiguration().matchedCameraInfo)
+                .filter(info -> info instanceof PVCameraInfo.PVPathCameraInfo)
+                .forEach(cameraInfos::add);
+
         checkMismatches(cameraInfos);
 
         return cameraInfos;
@@ -504,6 +510,7 @@ public class VisionSourceManager {
                     case UsbCamera -> new USBCameraSource(configuration);
                     case ZeroCopyPicam -> new LibcameraGpuSource(configuration);
                     case FileCamera -> new FileVisionSource(configuration);
+                    case PathCamera -> new PathCameraSource(configuration);
                 };
 
         if (source.getFrameProvider() == null) {

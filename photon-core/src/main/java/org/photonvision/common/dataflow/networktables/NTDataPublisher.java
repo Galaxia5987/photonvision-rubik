@@ -17,7 +17,6 @@
 
 package org.photonvision.common.dataflow.networktables;
 
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTablesJNI;
@@ -80,7 +79,7 @@ public class NTDataPublisher implements CVPipelineResultConsumer {
 
         // ignore indexes below 0
         if (newIndex < 0) {
-            ts.pipelineIndexPublisher.set(originalIndex);
+            //            ts.pipelineIndexPublisher.set(originalIndex);
             return;
         }
 
@@ -92,7 +91,7 @@ public class NTDataPublisher implements CVPipelineResultConsumer {
         pipelineIndexConsumer.accept(newIndex);
         var setIndex = pipelineIndexSupplier.get();
         if (newIndex != setIndex) { // set failed
-            ts.pipelineIndexPublisher.set(setIndex);
+            //            ts.pipelineIndexPublisher.set(setIndex);
             // TODO: Log
         }
         logger.debug("Set pipeline index to " + newIndex);
@@ -137,17 +136,20 @@ public class NTDataPublisher implements CVPipelineResultConsumer {
 
         ts.updateEntries();
 
-        pipelineIndexListener =
-                new NTDataChangeListener(
-                        ts.subTable.getInstance(), ts.pipelineIndexRequestSub, this::onPipelineIndexChange);
-
-        driverModeListener =
-                new NTDataChangeListener(
-                        ts.subTable.getInstance(), ts.driverModeSubscriber, this::onDriverModeChange);
-
-        fpsLimitListener =
-                new NTDataChangeListener(
-                        ts.subTable.getInstance(), ts.fpsLimitSubscriber, this::onFPSLimitChange);
+        //        pipelineIndexListener =
+        //                new NTDataChangeListener(
+        //                        ts.subTable.getInstance(), ts.pipelineIndexRequestSub,
+        // this::onPipelineIndexChange);
+        //
+        //        driverModeListener =
+        //                new NTDataChangeListener(
+        //                        ts.subTable.getInstance(), ts.driverModeSubscriber,
+        // this::onDriverModeChange);
+        //
+        //        fpsLimitListener =
+        //                new NTDataChangeListener(
+        //                        ts.subTable.getInstance(), ts.fpsLimitSubscriber,
+        // this::onFPSLimitChange);
     }
 
     public void updateCameraNickname(String newCameraNickname) {
@@ -189,40 +191,40 @@ public class NTDataPublisher implements CVPipelineResultConsumer {
                         acceptedResult.multiTagResult);
 
         // random guess at size of the array
-        ts.resultPublisher.set(simplified, 1024);
+        //        ts.resultPublisher.set(simplified, 1024);
         if (ConfigManager.getInstance().getConfig().getNetworkConfig().shouldPublishProto) {
             ts.protoResultPublisher.set(simplified);
         }
 
-        ts.pipelineIndexPublisher.set(pipelineIndexSupplier.get());
-        ts.driverModePublisher.set(driverModeSupplier.getAsBoolean());
-        ts.fpsLimitPublisher.set(fpsLimitSupplier.get());
+        //        ts.pipelineIndexPublisher.set(pipelineIndexSupplier.get());
+        //        ts.driverModePublisher.set(driverModeSupplier.getAsBoolean());
+        //        ts.fpsLimitPublisher.set(fpsLimitSupplier.get());
         ts.latencyMillisEntry.set(acceptedResult.getLatencyMillis());
         ts.fpsEntry.set(acceptedResult.fps);
-        ts.hasTargetEntry.set(acceptedResult.hasTargets());
+        //        ts.hasTargetEntry.set(acceptedResult.hasTargets());
 
         if (acceptedResult.hasTargets()) {
             var bestTarget = acceptedResult.targets.get(0);
 
-            ts.targetPitchEntry.set(bestTarget.getPitch());
-            ts.targetYawEntry.set(bestTarget.getYaw());
-            ts.targetAreaEntry.set(bestTarget.getArea());
-            ts.targetSkewEntry.set(bestTarget.getSkew());
+            //            ts.targetPitchEntry.set(bestTarget.getPitch());
+            //            ts.targetYawEntry.set(bestTarget.getYaw());
+            //            ts.targetAreaEntry.set(bestTarget.getArea());
+            //            ts.targetSkewEntry.set(bestTarget.getSkew());
+            //
+            //            var pose = bestTarget.getBestCameraToTarget3d();
+            //            ts.targetPoseEntry.set(pose);
 
-            var pose = bestTarget.getBestCameraToTarget3d();
-            ts.targetPoseEntry.set(pose);
-
-            var targetOffsetPoint = bestTarget.getTargetOffsetPoint();
-            ts.bestTargetPosX.set(targetOffsetPoint.x);
-            ts.bestTargetPosY.set(targetOffsetPoint.y);
+            //            var targetOffsetPoint = bestTarget.getTargetOffsetPoint();
+            //            ts.bestTargetPosX.set(targetOffsetPoint.x);
+            //            ts.bestTargetPosY.set(targetOffsetPoint.y);
         } else {
-            ts.targetPitchEntry.set(0);
-            ts.targetYawEntry.set(0);
-            ts.targetAreaEntry.set(0);
-            ts.targetSkewEntry.set(0);
-            ts.targetPoseEntry.set(new Transform3d());
-            ts.bestTargetPosX.set(0);
-            ts.bestTargetPosY.set(0);
+            //            ts.targetPitchEntry.set(0);
+            //            ts.targetYawEntry.set(0);
+            //            ts.targetAreaEntry.set(0);
+            //            ts.targetSkewEntry.set(0);
+            //            ts.targetPoseEntry.set(new Transform3d());
+            //            ts.bestTargetPosX.set(0);
+            //            ts.bestTargetPosY.set(0);
         }
 
         // Something in the result can sometimes be null -- so check probably too many things
@@ -230,11 +232,11 @@ public class NTDataPublisher implements CVPipelineResultConsumer {
                 && acceptedResult.inputAndOutputFrame.frameStaticProperties != null
                 && acceptedResult.inputAndOutputFrame.frameStaticProperties.cameraCalibration != null) {
             var fsp = acceptedResult.inputAndOutputFrame.frameStaticProperties;
-            ts.cameraIntrinsicsPublisher.accept(fsp.cameraCalibration.getIntrinsicsArr());
-            ts.cameraDistortionPublisher.accept(fsp.cameraCalibration.getDistCoeffsArr());
+            //            ts.cameraIntrinsicsPublisher.accept(fsp.cameraCalibration.getIntrinsicsArr());
+            //            ts.cameraDistortionPublisher.accept(fsp.cameraCalibration.getDistCoeffsArr());
         } else {
-            ts.cameraIntrinsicsPublisher.accept(new double[0]);
-            ts.cameraDistortionPublisher.accept(new double[0]);
+            //            ts.cameraIntrinsicsPublisher.accept(new double[0]);
+            //            ts.cameraDistortionPublisher.accept(new double[0]);
         }
 
         ts.heartbeatPublisher.set(acceptedResult.sequenceID);

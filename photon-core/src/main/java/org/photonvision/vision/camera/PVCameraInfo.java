@@ -300,8 +300,7 @@ public sealed interface PVCameraInfo {
         public final String name;
 
         @JsonCreator
-        public PVPathCameraInfo(
-                @JsonProperty("path") String path, @JsonProperty("name") String name) {
+        public PVPathCameraInfo(@JsonProperty("path") String path, @JsonProperty("name") String name) {
             this.path = path;
             this.name = name;
         }

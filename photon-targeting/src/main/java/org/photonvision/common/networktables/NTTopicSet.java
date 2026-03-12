@@ -17,19 +17,12 @@
 
 package org.photonvision.common.networktables;
 
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.BooleanSubscriber;
-import edu.wpi.first.networktables.BooleanTopic;
-import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.IntegerPublisher;
-import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.IntegerTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.ProtobufPublisher;
 import edu.wpi.first.networktables.PubSubOption;
-import edu.wpi.first.networktables.StructPublisher;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 /**
@@ -44,39 +37,39 @@ import org.photonvision.targeting.PhotonPipelineResult;
 public class NTTopicSet {
     public NetworkTable subTable;
 
-//    public PacketPublisher<PhotonPipelineResult> resultPublisher;
+    //    public PacketPublisher<PhotonPipelineResult> resultPublisher;
     public ProtobufPublisher<PhotonPipelineResult> protoResultPublisher;
 
-//    public IntegerPublisher pipelineIndexPublisher;
-//    public IntegerSubscriber pipelineIndexRequestSub;
+    //    public IntegerPublisher pipelineIndexPublisher;
+    //    public IntegerSubscriber pipelineIndexRequestSub;
 
-//    public BooleanTopic driverModeEntry;
-//    public BooleanPublisher driverModePublisher;
-//    public BooleanSubscriber driverModeSubscriber;
-//
-//    public IntegerPublisher fpsLimitPublisher;
-//    public IntegerSubscriber fpsLimitSubscriber;
-//
+    //    public BooleanTopic driverModeEntry;
+    //    public BooleanPublisher driverModePublisher;
+    //    public BooleanSubscriber driverModeSubscriber;
+    //
+    //    public IntegerPublisher fpsLimitPublisher;
+    //    public IntegerSubscriber fpsLimitSubscriber;
+    //
     public DoublePublisher latencyMillisEntry;
     public DoublePublisher fpsEntry;
-//    public BooleanPublisher hasTargetEntry;
-//    public DoublePublisher targetPitchEntry;
-//    public DoublePublisher targetYawEntry;
-//    public DoublePublisher targetAreaEntry;
-//    public StructPublisher<Transform3d> targetPoseEntry;
-//    public DoublePublisher targetSkewEntry;
+    //    public BooleanPublisher hasTargetEntry;
+    //    public DoublePublisher targetPitchEntry;
+    //    public DoublePublisher targetYawEntry;
+    //    public DoublePublisher targetAreaEntry;
+    //    public StructPublisher<Transform3d> targetPoseEntry;
+    //    public DoublePublisher targetSkewEntry;
 
     // The raw position of the best target, in pixels.
-//    public DoublePublisher bestTargetPosX;
-//    public DoublePublisher bestTargetPosY;
+    //    public DoublePublisher bestTargetPosX;
+    //    public DoublePublisher bestTargetPosY;
 
     // Heartbeat
     public IntegerTopic heartbeatTopic;
     public IntegerPublisher heartbeatPublisher;
 
     // Camera Calibration
-//    public DoubleArrayPublisher cameraIntrinsicsPublisher;
-//    public DoubleArrayPublisher cameraDistortionPublisher;
+    //    public DoubleArrayPublisher cameraIntrinsicsPublisher;
+    //    public DoubleArrayPublisher cameraDistortionPublisher;
 
     public void updateEntries() {
         protoResultPublisher =
@@ -126,7 +119,6 @@ public class NTTopicSet {
         //        bestTargetPosX = subTable.getDoubleTopic("targetPixelsX").publish();
         //        bestTargetPosY = subTable.getDoubleTopic("targetPixelsY").publish();
 
-
         //        cameraIntrinsicsPublisher =
         // subTable.getDoubleArrayTopic("cameraIntrinsics").publish();
         //        cameraDistortionPublisher =
@@ -135,30 +127,30 @@ public class NTTopicSet {
 
     @SuppressWarnings("DuplicatedCode")
     public void removeEntries() {
-//        if (resultPublisher != null) resultPublisher.close();
-//        if (pipelineIndexPublisher != null) pipelineIndexPublisher.close();
-//        if (pipelineIndexRequestSub != null) pipelineIndexRequestSub.close();
-//
-//        if (driverModePublisher != null) driverModePublisher.close();
-//        if (driverModeSubscriber != null) driverModeSubscriber.close();
-//
-//        if (fpsLimitPublisher != null) fpsLimitPublisher.close();
-//        if (fpsLimitSubscriber != null) fpsLimitSubscriber.close();
+        //        if (resultPublisher != null) resultPublisher.close();
+        //        if (pipelineIndexPublisher != null) pipelineIndexPublisher.close();
+        //        if (pipelineIndexRequestSub != null) pipelineIndexRequestSub.close();
+        //
+        //        if (driverModePublisher != null) driverModePublisher.close();
+        //        if (driverModeSubscriber != null) driverModeSubscriber.close();
+        //
+        //        if (fpsLimitPublisher != null) fpsLimitPublisher.close();
+        //        if (fpsLimitSubscriber != null) fpsLimitSubscriber.close();
 
         if (latencyMillisEntry != null) latencyMillisEntry.close();
         if (fpsEntry != null) fpsEntry.close();
-//        if (hasTargetEntry != null) hasTargetEntry.close();
-//        if (targetPitchEntry != null) targetPitchEntry.close();
-//        if (targetAreaEntry != null) targetAreaEntry.close();
-//        if (targetYawEntry != null) targetYawEntry.close();
-//        if (targetPoseEntry != null) targetPoseEntry.close();
-//        if (targetSkewEntry != null) targetSkewEntry.close();
-//        if (bestTargetPosX != null) bestTargetPosX.close();
-//        if (bestTargetPosY != null) bestTargetPosY.close();
+        //        if (hasTargetEntry != null) hasTargetEntry.close();
+        //        if (targetPitchEntry != null) targetPitchEntry.close();
+        //        if (targetAreaEntry != null) targetAreaEntry.close();
+        //        if (targetYawEntry != null) targetYawEntry.close();
+        //        if (targetPoseEntry != null) targetPoseEntry.close();
+        //        if (targetSkewEntry != null) targetSkewEntry.close();
+        //        if (bestTargetPosX != null) bestTargetPosX.close();
+        //        if (bestTargetPosY != null) bestTargetPosY.close();
 
         if (heartbeatPublisher != null) heartbeatPublisher.close();
 
-//        if (cameraIntrinsicsPublisher != null) cameraIntrinsicsPublisher.close();
-//        if (cameraDistortionPublisher != null) cameraDistortionPublisher.close();
+        //        if (cameraIntrinsicsPublisher != null) cameraIntrinsicsPublisher.close();
+        //        if (cameraDistortionPublisher != null) cameraDistortionPublisher.close();
     }
 }
